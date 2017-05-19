@@ -5,7 +5,7 @@ var cake = {
   bakeTemp: "425 degrees",
   bakeTime: "45 minutes",
   customer: "Tommy",
-  decorate: (updateFunction) => {
+  decorate: function(updateFunction) {
     var status = "Decorating with " + this.topping + ". Ready to eat soon!"
     updateFunction(status)
 
@@ -45,33 +45,34 @@ function bake(updateFunction) {
   var status = "Baking at " + this.bakeTemp + " for " + this.bakeTime
   updateFunction(status)
   setTimeout( () => {
-    cool.call( cake, updateFunction )
-  }, 2000)
+    cool.call( this, updateFunction )
+}, 2000)
 }
 
 function mix(updateFunction) {
   var status = "Mixing " + this.ingredients.join(", ")
   setTimeout( () => {
-    bake.call( cake, updateFunction)
+    bake.call( this, updateFunction)
 }, 2000)
   updateFunction(status)
 }
 
 function cool(updateFunction) {
   var status = "It has to cool! Hands off!"
-  updateFunction(status)
 
+  updateFunction(status)
   setTimeout( () => {
     this.decorate(updateFunction)
 }, 2000)
-
 }
 
 function makeDessert() {
     if (this.innerHTML === "Make Cake"){
-        makeCake.call($("#cake")[0])
+        makeCake.call(document.getElementById('cake'))
+        // makeCake.call($("#cake")[0])
     } else {
-        makePie.call($("#pie")[0])
+        makePie.call(document.getElementById('pie'))
+        // makePie.call($("#pie")[0])
     }
 }
 
