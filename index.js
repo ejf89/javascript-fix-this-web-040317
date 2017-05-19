@@ -5,13 +5,14 @@ var cake = {
   bakeTemp: "425 degrees",
   bakeTime: "45 minutes",
   customer: "Tommy",
-  decorate: function(updateFunction) {
+  decorate: (updateFunction) => {
     var status = "Decorating with " + this.topping + ". Ready to eat soon!"
     updateFunction(status)
-    setTimeout(function() {
-      updateFunction(serve.apply(this, "Happy Eating!", this.customer))
+
+    setTimeout( () => {
+      updateFunction(serve.apply(this, ["Happy Eating!", this.customer]))
     }, 2000)
-  }
+    }
 }
 
 var pie = {
@@ -24,44 +25,54 @@ var pie = {
 }
 
 function makeCake() {
-  var updateCakeStatus;
-  mix(updateCakeStatus)
+  var updateCakeStatus = updateStatus.bind(this)
+  updateCakeStatus('MAKING CAKE!')
+  mix.call(cake, updateCakeStatus)
 }
 
 function makePie() {
-  var updatePieStatus;
-  mix(updatePieStatus)
+  var updatePieStatus = updateStatus.bind(this)
+  updatePieStatus('MAKING PIE')
+  pie.decorate = cake.decorate.bind(pie)
+  mix.call(pie, updatePieStatus)
 }
 
 function updateStatus(statusText) {
-  this.getElementsByClassName("status")[0].innerText = statusText
+    this.getElementsByClassName("status")[0].innerText = statusText
 }
 
 function bake(updateFunction) {
   var status = "Baking at " + this.bakeTemp + " for " + this.bakeTime
-  setTimeout(function() {
-    cool(updateFunction)
+  updateFunction(status)
+  setTimeout( () => {
+    cool.call( cake, updateFunction )
   }, 2000)
 }
 
 function mix(updateFunction) {
   var status = "Mixing " + this.ingredients.join(", ")
-  setTimeout(function() {
-    bake(updateFunction)
-  }, 2000)
+  setTimeout( () => {
+    bake.call( cake, updateFunction)
+}, 2000)
   updateFunction(status)
 }
 
 function cool(updateFunction) {
   var status = "It has to cool! Hands off!"
-  setTimeout(function() {
+  updateFunction(status)
+
+  setTimeout( () => {
     this.decorate(updateFunction)
-  }, 2000)
+}, 2000)
+
 }
 
 function makeDessert() {
-  //add code here to decide which make... function to call
-  //based on which link was clicked
+    if (this.innerHTML === "Make Cake"){
+        makeCake.call($("#cake")[0])
+    } else {
+        makePie.call($("#pie")[0])
+    }
 }
 
 function serve(message, customer) {
